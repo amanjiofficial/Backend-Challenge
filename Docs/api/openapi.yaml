@@ -1,0 +1,24 @@
+openapi: 3.0.1
+info:
+  title: Backend Challenge
+  description: This is the project for a movie theatre ticket booking system. For more information visit at [Backend-Challenge](https://github.com/amanjiofficial/backend-challenge).
+  contact:
+    email: amanjiofficial@gmail.com
+  license:
+    name: GNU General Public License v3.0
+    url: https://github.com/amanjiofficial/backend-challenge/blob/master/LICENSE.txt
+  version: 1.0.0
+externalDocs:
+  description: Documentation for Application
+  url: https://github.com/amanjiofficial/backend-challenge/docs
+servers:
+- url: https://127.0.0.1:5000
+paths:
+  /:
+    get:
+      summary: Home page
+      responses:
+        200:
+          description: Successfull Response
+        400:
+          description: Error in Loading Home Page
