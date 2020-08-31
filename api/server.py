@@ -1,7 +1,7 @@
 from flask import Blueprint, request, flash
 from flask_restful import Resource, Api
 from api.db import db
-from api.utility import TicketSchema, generateID, convertDateTime, validNoOfBooking, expiryTime
+from api.utility import TicketSchema, generateID, retrieveExpiryTime, convertDateTime, validNoOfBooking, expiryTime, convertDateTimeReverse
 
 bluePrint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(bluePrint)
@@ -31,8 +31,50 @@ class TicketBooking(Resource):
                 db.bookings.tickets.insert_one(ticket)
             except Exception as e:
                 flash(e.__str__())
-                return {'error': 'Database error. Please try again later'}, 500
+                return {'error': 'Database could not be configured. Please try again later'}, 500
         
         return {'message': 'Congratulations booking Confirmed', 'ticketID': ticket["ticketID"]}, 201
+    
+    def get(self):
+            if "timing" in request.args:
+                if request.args["timing"] == '':
+                    return {'error': 'Invalid value of timing'}, 400
+                else:
+                    timing = request.args["timing"]
+                    print(timing)
+                    response = []
+                    try:
+                        retrieveTickets = list(db.bookings.tickets.find({'timing': convertDateTime(timing) }))
+                        for tickets in retrieveTickets:
+                            tickets['expire'] = convertDateTimeReverse(retrieveExpiryTime(tickets['expire']))
+                            tickets['timing'] = convertDateTimeReverse(tickets['timing'])
+                            tickets['_id'] = str(tickets['_id'])
+                            response.append(tickets)
+                    except Exception as e:
+                        flash(e.__str__())
+                        return {'error': 'Database could not be configured. Please try again later'}, 500
+
+                return {'tickets': response}, 200 
+            else:
+                try:
+                    if request.args["ticketID"]:
+                        if request.args["ticketID"] == '':
+                            return {'error': 'Invalid value of ticket ID'}, 400
+                        else:
+                            ticketID = request.args["ticketID"]
+                            try:
+                                retrieveTicket = db.bookings.tickets.find_one({'ticketID': ticketID })
+                                if not retrieveTicket:
+                                    return {'error': "no ticket exists with this ticketID"}
+                                retrieveTicket['expire'] = convertDateTimeReverse(retrieveExpiryTime(retrieveTicket['expire']))
+                                retrieveTicket['timing'] = convertDateTimeReverse(retrieveTicket['timing'])
+                                retrieveTicket['_id'] = str(retrieveTicket['_id'])
+                            except Exception as e:
+                                print(e.__str__())
+                                return {'error': 'Database could not be configured. Please try again later'}, 500
+
+                        return {'ticket': retrieveTicket}, 200 
+                except KeyError:
+                    return {'error': 'Requires atleast ticketID or timing'}, 400
 
 api.add_resource(TicketBooking, '/book')

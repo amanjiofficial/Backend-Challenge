@@ -13,6 +13,9 @@ class TicketSchema(Schema):
 def convertDateTime(time):
     return datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M")
 
+def convertDateTimeReverse(time):
+    return datetime.datetime.strftime(time, "%Y-%m-%dT%H:%M")
+
 def validNoOfBooking(timing):
     bookingCount = db.bookings.tickets.find({'timing': timing }).count()
     if bookingCount == 20:
@@ -24,3 +27,6 @@ def generateID():
 
 def expiryTime(timing):
     return timing.replace(tzinfo=tz.tzlocal()).astimezone(tz.tzutc()) + datetime.timedelta(hours=8)
+
+def retrieveExpiryTime(timing):
+    return timing.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal())
