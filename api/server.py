@@ -106,4 +106,24 @@ class TicketBooking(Resource):
     
         return {'message': 'Ticket Details updated'}, 201
 
+    def delete(self):
+        try:
+            if request.args["ticketID"] == '':
+                return {'error': 'Invalid value of ticket ID'}, 400
+            else:
+                try:
+                    ticket = db.bookings.tickets.find_one({'ticketID': request.args['ticketID'] })
+                    if not ticket:
+                        return {'error': "No ticket exists with this ticketID"}, 400
+                    else:
+                        db.bookings.tickets.delete_one({'ticketID': request.args['ticketID'] })
+
+                except Exception as e:
+                    flash(e.__str__())
+                    return {'error': 'Database could not be configured. Please try again later'}, 500
+    
+            return {'message': 'Ticket Deleted successfully'}, 201
+
+        except KeyError:
+            return {'error': 'ticket ID not present in request'}, 400
 api.add_resource(TicketBooking, '/book')
