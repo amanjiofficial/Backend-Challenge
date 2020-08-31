@@ -11,7 +11,7 @@ class TicketBooking(Resource):
         ticket = TicketSchema()
         errors = ticket.validate(request.args)
         if errors:
-            return (404, str(errors))
+            return (400, str(errors))
         else:
             try:
                 timing = convertDateTime(request.args['timing'])
@@ -81,7 +81,7 @@ class TicketBooking(Resource):
         updateRequest = UpdateRequestSchema()
         errors = updateRequest.validate(request.args)
         if errors:
-            return (404, str(errors))
+            return (400, str(errors))
         else:
             try:
                 timing = convertDateTime(request.args['timing'])

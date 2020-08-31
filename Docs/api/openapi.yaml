@@ -21,4 +21,138 @@ paths:
         200:
           description: Successfull Response
         400:
-          description: Error in Loading Home Page
+          description: Invalid Request
+  /book:
+    post:
+      summary: To submit new ticket request
+      parameters:
+        - name: username
+          in: query
+          description: Username of the user
+          required: true
+          style: form
+          schema:
+            type: string
+        - name: phoneNo
+          in: query
+          description: Phone Number of the user
+          required: true
+          style: form
+          schema:
+            type: string
+        - name: timings
+          in: query
+          description: Timings of the show to be booked
+          required: true
+          style: form
+          schema:
+            type: datetime
+      responses:
+        200:
+          description: Ticket booked
+          content:
+            application/json:
+              schema:
+                type: json
+        400:
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Database Error
+          content:
+            application/json:
+              schema:
+                type: string
+    get:
+      summary: To retrieve ticket
+      parameters:
+        - name: ticketID
+          in: query
+          description: ID of the ticket to be retrieved
+          style: form
+          schema:
+            type: string
+        - name: timing
+          in: query
+          description: For retrieving tikcets of a particular timing
+          style: form
+          schema:
+            type: string
+      responses:
+        200:
+          description: Ticket Retrieval Successfull
+          content:
+            application/json:
+              schema:
+                type: json
+        400:
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Database Error
+          content:
+            application/json:
+              schema:
+                type: string
+    put:
+      summary: To update ticket timing
+      parameters:
+        - name: ticketID
+          in: query
+          description: ID of the ticket to be updated
+          style: form
+          schema:
+            type: string
+      responses:
+        200:
+          description: Ticket timing updated Successfull
+          content:
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Database Error
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      summary: To delete a ticket
+      parameters:
+        - name: ticketID
+          in: query
+          description: ID of the ticket to be deleted
+          style: form
+          schema:
+            type: string
+      responses:
+        200:
+          description: Ticket deleted Successfull
+          content:
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Database Error
+          content:
+            application/json:
+              schema:
+                type: string
