@@ -4,6 +4,7 @@
 [![Top Language](https://img.shields.io/github/languages/top/amanjiofficial/Backend-Challenge)]()
 [![Github Issues](https://img.shields.io/github/issues/amanjiofficial/tenjint-flask)](https://github.com/amanjiofficial/Backend-Challenge/issues)
 [![Github License](https://img.shields.io/github/license/amanjiofficial/tenjint-flask)](https://github.com/amanjiofficial/Backend-Challenge/blob/master/LICENSE)
+[![Github Release](https://img.shields.io/github/v/release/amanjiofficial/Backend-Challenge?sort=semver)](https://github.com/amanjiofficial/Backend-Challenge/releases/tag/v1.0)
 
 
 Zomentum Backend Challenge
@@ -16,7 +17,7 @@ For openAPI based Documentation visit [Documentation](https://github.com/amanjio
 
 Clone this repository.
 
-    git clone https://github.com/amanjiofficial/tenjint-flask.git
+    git clone https://github.com/amanjiofficial/Backend-Challenge.git
 
 Create a virtualenv and activate.
 
