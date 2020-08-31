@@ -1,36 +1,38 @@
-from flask import Flask, render_template, request, jsonify, abort, render_template
-from api.utility import struct_msg
-from config import api_configuration
+from flask import Blueprint, request, flash
+from flask_restful import Resource, Api
+from api.db import db
+from api.utility import TicketSchema, generateID, convertDateTime, validNoOfBooking, expiryTime
 
-app = Flask(__name__,template_folder="../templates")
-api_config = api_configuration()
+bluePrint = Blueprint('api', __name__, url_prefix='/api')
+api = Api(bluePrint)
 
-@app.errorhandler(400)
-def error_400(error):
-    """
-    handle 400 error
-    Args:
-        error: the flask error
-    Returns:
-        400 JSON error
-    """
-    return jsonify(
-        struct_msg(status="error", msg=error.description)
-    ), 400
+class TicketBooking(Resource):
+    def post(self):
+        ticket = TicketSchema()
+        errors = ticket.validate(request.args)
+        if errors:
+            return (404, str(errors))
+        else:
+            try:
+                timing = convertDateTime(request.args['timing'])
+            except ValueError as v:
+                return {'error': v.__str__()}
+            try:
+                if not validNoOfBooking(timing):
+                    return {'error': 'Booking Full for this timing.'}, 400
 
-@app.errorhandler(404)
-def error_404(error):
-    """
-    handle 404 error
-    Args:
-        error: Authentication Failed
-    Returns:
-        404 JSON error
-    """
-    return jsonify(
-        struct_msg(status="error", msg=error.description)
-    ), 404
+                ticket = {
+                    'ticketID': generateID(),
+                    'expire': expiryTime(timing),
+                    'username': request.args['username'].strip(),
+                    'phoneNo': request.args['phoneNo'].strip(),
+                    'timing': timing,
+                }
+                db.bookings.tickets.insert_one(ticket)
+            except Exception as e:
+                flash(e.__str__())
+                return {'error': 'Database error. Please try again later'}, 500
+        
+        return {'message': 'Congratulations booking Confirmed', 'ticketID': ticket["ticketID"]}, 201
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    return render_template("index.html")
+api.add_resource(TicketBooking, '/book')
