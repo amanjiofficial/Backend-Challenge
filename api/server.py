@@ -1,7 +1,7 @@
 from flask import Blueprint, request, flash
 from flask_restful import Resource, Api
 from api.db import db
-from api.utility import TicketSchema, generateID, retrieveExpiryTime, convertDateTime, validNoOfBooking, expiryTime, convertDateTimeReverse
+from api.utility import UpdateRequestSchema, TicketSchema, generateID, retrieveExpiryTime, convertDateTime, validNoOfBooking, expiryTime, convertDateTimeReverse
 
 bluePrint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(bluePrint)
@@ -65,7 +65,7 @@ class TicketBooking(Resource):
                             try:
                                 retrieveTicket = db.bookings.tickets.find_one({'ticketID': ticketID })
                                 if not retrieveTicket:
-                                    return {'error': "no ticket exists with this ticketID"}
+                                    return {'error': "No ticket exists with this ticketID"}, 400
                                 retrieveTicket['expire'] = convertDateTimeReverse(retrieveExpiryTime(retrieveTicket['expire']))
                                 retrieveTicket['timing'] = convertDateTimeReverse(retrieveTicket['timing'])
                                 retrieveTicket['_id'] = str(retrieveTicket['_id'])
@@ -76,5 +76,34 @@ class TicketBooking(Resource):
                         return {'ticket': retrieveTicket}, 200 
                 except KeyError:
                     return {'error': 'Requires atleast ticketID or timing'}, 400
+
+    def put(self):
+        updateRequest = UpdateRequestSchema()
+        errors = updateRequest.validate(request.args)
+        if errors:
+            return (404, str(errors))
+        else:
+            try:
+                timing = convertDateTime(request.args['timing'])
+            except ValueError as v:
+                return {'error': v.__str__()}
+            try:
+                if not validNoOfBooking(timing):
+                    return {'error': 'Booking Full for this timing.'}, 400
+                ticket = db.bookings.tickets.find_one({'ticketID': request.args['ticketID'] })
+                if not ticket:
+                    return {'error': "No ticket exists with this ticketID"}, 400
+                db.bookings.tickets.update_one({'ticketID': request.args['ticketID'] }, 
+                {
+                '$set': {
+                    'timing': timing,
+                    'expire': expiryTime(timing)
+                    }
+                })
+            except Exception as e:
+                flash(e.__str__())
+                return {'error': 'Database could not be configured. Please try again later'}, 500
+    
+        return {'message': 'Ticket Details updated'}, 201
 
 api.add_resource(TicketBooking, '/book')

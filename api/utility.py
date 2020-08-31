@@ -10,6 +10,11 @@ class TicketSchema(Schema):
     phoneNo = fields.Str(required=True)
     timing = fields.Str(required=True)
 
+class UpdateRequestSchema(Schema):
+    timing = fields.Str(required=True)
+    ticketID = fields.Str(required=True)
+
+
 def convertDateTime(time):
     return datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M")
 
