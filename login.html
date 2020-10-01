@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="heading">
+        <h1>SHORTLISTED.</h1>
+    </div>
+    <div class="quote">
+      <p class="quote-text">"Choose a job you love, and you will never have to work a day in your life"</p>
+  </div>
+  <div class="button-login">
+    <button onclick="window.location='signup';">REGISTER</button>
+</div>
+    <div class="container-login">
+        <header>Login</header>
+        <form>
+          <div class="inputfield">
+            <label>Login as</label>
+            <div class="custom_select">
+              <select>
+                <option value="">Select</option>
+                <option value="candidate">Candidate</option>
+                <option value="recruiter">Recruiter</option>
+              </select>
+            </div>
+        </div> 
+        <div class="input-field">
+          <input type="text" required>
+          <label>Email</label>
+        </div>
+    <div class="input-field">
+        <input class="password" type="password" required>
+        <span class="show">SHOW</span>
+        <label>Password</label>
+    </div>
+    <div class="button">
+        <div class="inner"></div>
+        <button>LOGIN</button>
+    </div>
+        </form>
+        <div class="auth">
+            Or login with</div>
+            <div class="links">
+            <div class="google">
+            <i class="fab fa-google-plus-square"><span>Google</span></i>
+            </div>
+            </div>
+    <div class="signup">Not a member? <a href="signup">Signup now</a>
+    </div>
+</div>
+
+<script>
+      var input = document.querySelector('.password');
+      var show = document.querySelector('.show');
+      show.addEventListener('click', active);
+      function active(){
+        if(input.type === "password"){
+          input.type = "text";
+          show.style.color = "#1DA1F2";
+          show.textContent = "HIDE";
+        }else{
+          input.type = "password";
+          show.textContent = "SHOW";
+          show.style.color = "#111";
+        }
+      }
+    </script>
+{% endblock content %}
